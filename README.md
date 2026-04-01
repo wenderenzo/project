@@ -24,6 +24,43 @@ API Spring Boot para gestao de projetos e membros com regras de negocio, seguran
 - `src/main/java/com/codegroup/project/common/...`
 - `src/test/java/com/codegroup/project/projeto/...`
 
+## Diagramas
+
+### Arquitetura
+#### Visao de camadas MVC
+<img src="docs/diagrams/Diagrama de Classes Principais Visao de camadas.svg" alt="Visao de camadas MVC" />
+
+#### Modelo de dominio
+<img src="docs/diagrams/Diagrama de Classes Principais Modelo de dominio.svg" alt="Modelo de dominio" />
+
+### Regras de negocio e estados
+#### Fluxo de status do projeto
+<img src="docs/diagrams/Diagrama de Classes Principais Fluxo de status do projeto.svg" alt="Fluxo de status do projeto" />
+
+#### Regras de classificacao de risco
+<img src="docs/diagrams/Diagrama de Classes Principais Regras de classificacao de risco.svg" alt="Regras de classificacao de risco" />
+
+#### Regras de alocacao de membros
+<img src="docs/diagrams/Diagrama de Classes Principais Regras de alocacao de membros.svg" alt="Regras de alocacao de membros" />
+
+#### Regra de exclusao
+<img src="docs/diagrams/Diagrama de Classes Principais Regra de exclusao.svg" alt="Regra de exclusao" />
+
+### Fluxos de API
+#### Criacao de projeto
+<img src="docs/diagrams/Diagrama de Classes Principais Criacao de projeto.svg" alt="Criacao de projeto" />
+
+#### Associacao de membros ao projeto
+<img src="docs/diagrams/Diagrama de Classes Principais Associacao de membros ao projeto.svg" alt="Associacao de membros ao projeto" />
+
+#### Tratamento de erro de negocio
+<img src="docs/diagrams/Diagrama de Classes Principais Tratamento de erro de negocio.svg" alt="Tratamento de erro de negocio" />
+
+Referencias em Markdown:
+- `docs/architecture.md`
+- `docs/business-rules-state-flow.md`
+- `docs/api-flow.md`
+
 ## Execucao
 Use o Maven Wrapper na raiz:
 
