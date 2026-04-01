@@ -1,0 +1,459 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-04-01T12:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v10.0.0",
+  "resources": [
+    {
+      "_id": "wrk_project_api",
+      "_type": "workspace",
+      "name": "Project API - Endpoints e Regras",
+      "description": "Colecao para validar endpoints e regras de negocio do projeto."
+    },
+    {
+      "_id": "env_project_api",
+      "_type": "environment",
+      "parentId": "wrk_project_api",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:8080",
+        "username": "admin",
+        "password": "123456",
+        "ids": {
+          "gerente": 1,
+          "membroFuncionario": 2,
+          "membroNaoFuncionario": 3,
+          "projetoRascunho": 1,
+          "projetoEmAnalise": 2,
+          "projetoIniciado": 3,
+          "projetoAtivoA": 4,
+          "projetoAtivoB": 5,
+          "projetoAtivoC": 6,
+          "projetoAtivoD": 7
+        }
+      }
+    },
+    {
+      "_id": "fld_membros",
+      "_type": "request_group",
+      "parentId": "wrk_project_api",
+      "name": "1) Membros externos",
+      "description": "Criacao e consulta de membros (mock da API externa)."
+    },
+    {
+      "_id": "req_membro_create_funcionario",
+      "_type": "request",
+      "parentId": "fld_membros",
+      "name": "POST criar membro funcionario (201)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/membros-externos",
+      "description": "Use para criar gerente e membros validos para alocacao.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Joao Gerente\",\n  \"atribuicao\": \"funcionario\"\n}"
+      }
+    },
+    {
+      "_id": "req_membro_create_nao_funcionario",
+      "_type": "request",
+      "parentId": "fld_membros",
+      "name": "POST criar membro nao funcionario (201)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/membros-externos",
+      "description": "Usado para testar bloqueio de alocacao por atribuicao.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Carlos Consultor\",\n  \"atribuicao\": \"consultor\"\n}"
+      }
+    },
+    {
+      "_id": "req_membro_list",
+      "_type": "request",
+      "parentId": "fld_membros",
+      "name": "GET listar membros (200)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/membros-externos",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      }
+    },
+    {
+      "_id": "req_membro_get_by_id",
+      "_type": "request",
+      "parentId": "fld_membros",
+      "name": "GET membro por id (200/404)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/membros-externos/{{ _.ids.gerente }}",
+      "description": "Retorna 404 se o id nao existir.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      }
+    },
+    {
+      "_id": "fld_projetos_crud",
+      "_type": "request_group",
+      "parentId": "wrk_project_api",
+      "name": "2) Projetos CRUD + filtros",
+      "description": "Endpoints principais de projeto com paginacao e filtro por nome/status/gerenteId."
+    },
+    {
+      "_id": "req_projeto_create_em_analise",
+      "_type": "request",
+      "parentId": "fld_projetos_crud",
+      "name": "POST criar projeto em analise (201)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Projeto Alfa\",\n  \"dataInicio\": \"2026-04-01\",\n  \"previsaoTermino\": \"2026-06-15\",\n  \"dataRealTermino\": null,\n  \"orcamentoTotal\": 95000.00,\n  \"descricao\": \"Projeto para validar fluxo principal\",\n  \"status\": \"em analise\",\n  \"gerenteId\": {{ _.ids.gerente }}\n}"
+      }
+    },
+    {
+      "_id": "req_projeto_get_by_id",
+      "_type": "request",
+      "parentId": "fld_projetos_crud",
+      "name": "GET projeto por id (200/404)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoRascunho }}",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      }
+    },
+    {
+      "_id": "req_projeto_list",
+      "_type": "request",
+      "parentId": "fld_projetos_crud",
+      "name": "GET listar projetos com filtro e paginacao (200)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/projetos?nome=Projeto&status=em%20analise&gerenteId={{ _.ids.gerente }}&page=0&size=10&sort=id,desc",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      }
+    },
+    {
+      "_id": "req_projeto_update_fluxo_valido",
+      "_type": "request",
+      "parentId": "fld_projetos_crud",
+      "name": "PUT atualizar status sequencial (200)",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoRascunho }}",
+      "description": "Exemplo de transicao valida: em analise -> analise realizada.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Projeto Alfa\",\n  \"dataInicio\": \"2026-04-01\",\n  \"previsaoTermino\": \"2026-06-15\",\n  \"dataRealTermino\": null,\n  \"orcamentoTotal\": 95000.00,\n  \"descricao\": \"Atualizacao para analise realizada\",\n  \"status\": \"analise realizada\",\n  \"gerenteId\": {{ _.ids.gerente }}\n}"
+      }
+    },
+    {
+      "_id": "req_projeto_delete",
+      "_type": "request",
+      "parentId": "fld_projetos_crud",
+      "name": "DELETE projeto permitido (204)",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoRascunho }}",
+      "description": "Permitido para status nao bloqueados (ex.: em analise, planejado, cancelado).",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      }
+    },
+    {
+      "_id": "req_projeto_relatorio",
+      "_type": "request",
+      "parentId": "fld_projetos_crud",
+      "name": "GET relatorio de projetos (200)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/projetos/relatorio",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      }
+    },
+    {
+      "_id": "fld_regras_negocio",
+      "_type": "request_group",
+      "parentId": "wrk_project_api",
+      "name": "3) Testes de regras de negocio",
+      "description": "Execucoes para validar retornos 400 de regras implementadas no dominio."
+    },
+    {
+      "_id": "req_regra_status_invalido",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "PUT status com salto de etapa (esperado 400)",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoEmAnalise }}",
+      "description": "Ex.: tentar em analise -> iniciado sem passar pelas etapas intermediarias.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"nome\": \"Projeto Pulo\",\n  \"dataInicio\": \"2026-04-01\",\n  \"previsaoTermino\": \"2026-08-01\",\n  \"dataRealTermino\": null,\n  \"orcamentoTotal\": 250000.00,\n  \"descricao\": \"Tentativa de pular status\",\n  \"status\": \"iniciado\",\n  \"gerenteId\": {{ _.ids.gerente }}\n}"
+      }
+    },
+    {
+      "_id": "req_regra_delete_bloqueado",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "DELETE projeto iniciado/em andamento/encerrado (esperado 400)",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoIniciado }}",
+      "description": "Bloqueio de exclusao para INICIADO, EM_ANDAMENTO e ENCERRADO.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      }
+    },
+    {
+      "_id": "req_regra_associar_nao_funcionario",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "POST associar membro nao funcionario (esperado 400)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoEmAnalise }}/membros",
+      "description": "Somente atribuicao 'funcionario' pode ser alocada.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"membroIds\": [{{ _.ids.membroNaoFuncionario }}]\n}"
+      }
+    },
+    {
+      "_id": "req_regra_associar_mais_10",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "POST associar mais de 10 membros (esperado 400)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoEmAnalise }}/membros",
+      "description": "DTO valida maximo de 10 membros por projeto.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"membroIds\": [1,2,3,4,5,6,7,8,9,10,11]\n}"
+      }
+    },
+    {
+      "_id": "req_regra_associar_ok",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "POST associar membros validos (200)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoEmAnalise }}/membros",
+      "description": "Caso positivo de alocacao.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"membroIds\": [{{ _.ids.membroFuncionario }}]\n}"
+      }
+    },
+    {
+      "_id": "req_regra_limite_3_ativos_passo_1",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "POST alocar membro no projeto ativo A (200)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoAtivoA }}/membros",
+      "description": "Passo 1/4 para validar limite de 3 projetos ativos.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"membroIds\": [{{ _.ids.membroFuncionario }}]\n}"
+      }
+    },
+    {
+      "_id": "req_regra_limite_3_ativos_passo_2",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "POST alocar membro no projeto ativo B (200)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoAtivoB }}/membros",
+      "description": "Passo 2/4 para validar limite de 3 projetos ativos.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"membroIds\": [{{ _.ids.membroFuncionario }}]\n}"
+      }
+    },
+    {
+      "_id": "req_regra_limite_3_ativos_passo_3",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "POST alocar membro no projeto ativo C (200)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoAtivoC }}/membros",
+      "description": "Passo 3/4 para validar limite de 3 projetos ativos.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"membroIds\": [{{ _.ids.membroFuncionario }}]\n}"
+      }
+    },
+    {
+      "_id": "req_regra_limite_3_ativos_passo_4",
+      "_type": "request",
+      "parentId": "fld_regras_negocio",
+      "name": "POST alocar membro no projeto ativo D (esperado 400)",
+      "method": "POST",
+      "url": "{{ _.base_url }}/projetos/{{ _.ids.projetoAtivoD }}/membros",
+      "description": "Passo 4/4 deve falhar com limite maximo de 3 projetos ativos por membro.",
+      "authentication": {
+        "type": "basic",
+        "username": "{{ _.username }}",
+        "password": "{{ _.password }}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"membroIds\": [{{ _.ids.membroFuncionario }}]\n}"
+      }
+    },
+    {
+      "_id": "fld_seguranca",
+      "_type": "request_group",
+      "parentId": "wrk_project_api",
+      "name": "4) Teste de seguranca",
+      "description": "Validacao de autenticacao basica exigida para a API."
+    },
+    {
+      "_id": "req_security_sem_auth",
+      "_type": "request",
+      "parentId": "fld_seguranca",
+      "name": "GET projetos sem auth (esperado 401)",
+      "method": "GET",
+      "url": "{{ _.base_url }}/projetos",
+      "description": "Remova credenciais deste request para validar bloqueio de acesso.",
+      "authentication": {
+        "type": "none"
+      }
+    }
+  ]
+}
+
