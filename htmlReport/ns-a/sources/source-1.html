@@ -1,0 +1,260 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Projeto</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.codegroup.project.projeto.entity</a>
+</div>
+
+<h1>Coverage Summary for Class: Projeto (com.codegroup.project.projeto.entity)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Projeto</td>
+<td class="coverageStat">
+  <span class="percent">
+    23,8%
+  </span>
+  <span class="absValue">
+    (5/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27,3%
+  </span>
+  <span class="absValue">
+    (6/22)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Projeto$HibernateInstantiator</td>
+  </tr>
+  <tr>
+    <td class="name">Projeto$HibernateProxy</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    23,8%
+  </span>
+  <span class="absValue">
+    (5/21)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    27,3%
+  </span>
+  <span class="absValue">
+    (6/22)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.codegroup.project.projeto.entity;
+&nbsp;
+&nbsp;import com.codegroup.project.membro.entity.Membro;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.EnumType;
+&nbsp;import jakarta.persistence.Enumerated;
+&nbsp;import jakarta.persistence.GeneratedValue;
+&nbsp;import jakarta.persistence.GenerationType;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;import jakarta.persistence.JoinColumn;
+&nbsp;import jakarta.persistence.JoinTable;
+&nbsp;import jakarta.persistence.ManyToMany;
+&nbsp;import jakarta.persistence.ManyToOne;
+&nbsp;import jakarta.persistence.Table;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;@Entity
+&nbsp;@Table(name = &quot;projetos&quot;)
+<b class="fc">&nbsp;public class Projeto {</b>
+&nbsp;
+&nbsp;    @Id
+&nbsp;    @GeneratedValue(strategy = GenerationType.IDENTITY)
+&nbsp;    private Long id;
+&nbsp;
+&nbsp;    @Column(nullable = false)
+&nbsp;    private String nome;
+&nbsp;
+&nbsp;    @Column(name = &quot;data_inicio&quot;, nullable = false)
+&nbsp;    private LocalDate dataInicio;
+&nbsp;
+&nbsp;    @Column(name = &quot;previsao_termino&quot;, nullable = false)
+&nbsp;    private LocalDate previsaoTermino;
+&nbsp;
+&nbsp;    @Column(name = &quot;data_real_termino&quot;)
+&nbsp;    private LocalDate dataRealTermino;
+&nbsp;
+&nbsp;    @Column(name = &quot;orcamento_total&quot;, nullable = false, precision = 19, scale = 2)
+&nbsp;    private BigDecimal orcamentoTotal;
+&nbsp;
+&nbsp;    @Column(nullable = false, length = 2000)
+&nbsp;    private String descricao;
+&nbsp;
+&nbsp;    @Enumerated(EnumType.STRING)
+&nbsp;    @Column(nullable = false)
+&nbsp;    private ProjetoStatus status;
+&nbsp;
+&nbsp;    @ManyToOne(optional = false)
+&nbsp;    @JoinColumn(name = &quot;gerente_id&quot;, nullable = false)
+&nbsp;    private Membro gerente;
+&nbsp;
+<b class="fc">&nbsp;    @ManyToMany</b>
+&nbsp;    @JoinTable(
+&nbsp;        name = &quot;projetos_membros&quot;,
+&nbsp;        joinColumns = @JoinColumn(name = &quot;projeto_id&quot;),
+&nbsp;        inverseJoinColumns = @JoinColumn(name = &quot;membro_id&quot;)
+&nbsp;    )
+&nbsp;    private Set&lt;Membro&gt; membros = new HashSet&lt;&gt;();
+&nbsp;
+&nbsp;    public Long getId() {
+<b class="nc">&nbsp;        return id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setId(Long id) {
+<b class="fc">&nbsp;        this.id = id;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getNome() {
+<b class="nc">&nbsp;        return nome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setNome(String nome) {
+<b class="nc">&nbsp;        this.nome = nome;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public LocalDate getDataInicio() {
+<b class="nc">&nbsp;        return dataInicio;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDataInicio(LocalDate dataInicio) {
+<b class="nc">&nbsp;        this.dataInicio = dataInicio;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public LocalDate getPrevisaoTermino() {
+<b class="nc">&nbsp;        return previsaoTermino;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setPrevisaoTermino(LocalDate previsaoTermino) {
+<b class="nc">&nbsp;        this.previsaoTermino = previsaoTermino;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public LocalDate getDataRealTermino() {
+<b class="nc">&nbsp;        return dataRealTermino;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDataRealTermino(LocalDate dataRealTermino) {
+<b class="nc">&nbsp;        this.dataRealTermino = dataRealTermino;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public BigDecimal getOrcamentoTotal() {
+<b class="nc">&nbsp;        return orcamentoTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setOrcamentoTotal(BigDecimal orcamentoTotal) {
+<b class="nc">&nbsp;        this.orcamentoTotal = orcamentoTotal;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getDescricao() {
+<b class="nc">&nbsp;        return descricao;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setDescricao(String descricao) {
+<b class="nc">&nbsp;        this.descricao = descricao;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ProjetoStatus getStatus() {
+<b class="fc">&nbsp;        return status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setStatus(ProjetoStatus status) {
+<b class="fc">&nbsp;        this.status = status;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Membro getGerente() {
+<b class="nc">&nbsp;        return gerente;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setGerente(Membro gerente) {
+<b class="nc">&nbsp;        this.gerente = gerente;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Set&lt;Membro&gt; getMembros() {
+<b class="fc">&nbsp;        return membros;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setMembros(Set&lt;Membro&gt; membros) {
+<b class="nc">&nbsp;        this.membros = membros;</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-02 19:01</div>
+</div>
+</body>
+</html>
