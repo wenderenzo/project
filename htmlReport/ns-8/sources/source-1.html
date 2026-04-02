@@ -1,0 +1,233 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProjetoBusinessRules</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.codegroup.project.projeto</a>
+</div>
+
+<h1>Coverage Summary for Class: ProjetoBusinessRules (com.codegroup.project.projeto)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProjetoBusinessRules</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    88,9%
+  </span>
+  <span class="absValue">
+    (8/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92,1%
+  </span>
+  <span class="absValue">
+    (35/38)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    95,2%
+  </span>
+  <span class="absValue">
+    (40/42)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.codegroup.project.projeto;
+&nbsp;
+&nbsp;import com.codegroup.project.common.exception.BusinessException;
+&nbsp;import com.codegroup.project.membro.entity.Membro;
+&nbsp;import com.codegroup.project.projeto.entity.Projeto;
+&nbsp;import com.codegroup.project.projeto.entity.ProjetoStatus;
+&nbsp;import com.codegroup.project.projeto.entity.RiscoProjeto;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.text.Normalizer;
+&nbsp;import java.time.LocalDate;
+&nbsp;import java.time.temporal.ChronoUnit;
+&nbsp;import java.util.EnumSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.function.Function;
+&nbsp;
+&nbsp;public final class ProjetoBusinessRules {
+&nbsp;
+<b class="fc">&nbsp;    private static final BigDecimal LIMITE_BAIXO = new BigDecimal(&quot;100000&quot;);</b>
+<b class="fc">&nbsp;    private static final BigDecimal LIMITE_ALTO = new BigDecimal(&quot;500000&quot;);</b>
+<b class="fc">&nbsp;    private static final Set&lt;ProjetoStatus&gt; STATUS_NAO_EXCLUIVEIS = EnumSet.of(</b>
+&nbsp;        ProjetoStatus.INICIADO,
+&nbsp;        ProjetoStatus.EM_ANDAMENTO,
+&nbsp;        ProjetoStatus.ENCERRADO
+&nbsp;    );
+<b class="fc">&nbsp;    private static final Set&lt;ProjetoStatus&gt; STATUS_FINALIZADOS = EnumSet.of(</b>
+&nbsp;        ProjetoStatus.ENCERRADO,
+&nbsp;        ProjetoStatus.CANCELADO
+&nbsp;    );
+&nbsp;
+&nbsp;    private ProjetoBusinessRules() {
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void validarDatas(LocalDate dataInicio, LocalDate previsaoTermino) {
+<b class="pc">&nbsp;        if (previsaoTermino.isBefore(dataInicio)) {</b>
+<b class="fc">&nbsp;            throw new BusinessException(&quot;Previsao de termino nao pode ser anterior a data de inicio&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static RiscoProjeto classificarRisco(BigDecimal orcamento, LocalDate dataInicio, LocalDate previsaoTermino) {
+<b class="fc">&nbsp;        long meses = calcularMesesComArredondamento(dataInicio, previsaoTermino);</b>
+<b class="pc">&nbsp;        if (orcamento.compareTo(LIMITE_BAIXO) &lt;= 0 &amp;&amp; meses &lt;= 3) {</b>
+<b class="fc">&nbsp;            return RiscoProjeto.BAIXO;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (orcamento.compareTo(LIMITE_ALTO) &gt; 0 || meses &gt; 6) {</b>
+<b class="fc">&nbsp;            return RiscoProjeto.ALTO;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return RiscoProjeto.MEDIO;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void validarTransicaoStatus(ProjetoStatus atual, ProjetoStatus proximo) {
+<b class="fc">&nbsp;        if (atual == null || atual == proximo) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        if (proximo == ProjetoStatus.CANCELADO) {</b>
+<b class="fc">&nbsp;            if (atual == ProjetoStatus.ENCERRADO) {</b>
+<b class="fc">&nbsp;                throw new BusinessException(&quot;Projeto encerrado nao pode ser cancelado&quot;);</b>
+&nbsp;            }
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        if (proximo.ordinal() != atual.ordinal() + 1) {</b>
+<b class="fc">&nbsp;            throw new BusinessException(&quot;Transicao de status invalida: nao e permitido pular etapas&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void validarExclusao(ProjetoStatus status) {
+<b class="fc">&nbsp;        if (STATUS_NAO_EXCLUIVEIS.contains(status)) {</b>
+<b class="fc">&nbsp;            throw new BusinessException(&quot;Projetos iniciados, em andamento ou encerrados nao podem ser excluidos&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void validarAlocacaoMembros(
+&nbsp;        Projeto projeto,
+&nbsp;        List&lt;Membro&gt; membros,
+&nbsp;        Function&lt;Long, Long&gt; contadorProjetosAtivos
+&nbsp;    ) {
+<b class="fc">&nbsp;        if (membros.isEmpty() || membros.size() &gt; 10) {</b>
+<b class="fc">&nbsp;            throw new BusinessException(&quot;Cada projeto deve ter entre 1 e 10 membros&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        for (Membro membro : membros) {</b>
+<b class="fc">&nbsp;            if (!isFuncionario(membro.getAtribuicao())) {</b>
+<b class="fc">&nbsp;                throw new BusinessException(&quot;Somente membros com atribuicao funcionario podem ser alocados&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            long projetosAtivos = contadorProjetosAtivos.apply(membro.getId());</b>
+<b class="fc">&nbsp;            boolean jaNoProjeto = projeto.getMembros().stream().anyMatch(item -&gt; item.getId().equals(membro.getId()));</b>
+<b class="fc">&nbsp;            boolean projetoContaComoAtivo = !STATUS_FINALIZADOS.contains(projeto.getStatus());</b>
+<b class="fc">&nbsp;            long totalAtivosComProjetoAtual = projetosAtivos + ((!jaNoProjeto &amp;&amp; projetoContaComoAtivo) ? 1 : 0);</b>
+<b class="fc">&nbsp;            if (totalAtivosComProjetoAtual &gt; 3) {</b>
+<b class="fc">&nbsp;                throw new BusinessException(&quot;Um membro nao pode participar de mais de 3 projetos ativos&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public static long calcularDuracaoDias(LocalDate inicio, LocalDate fim) {
+<b class="nc">&nbsp;        return ChronoUnit.DAYS.between(inicio, fim);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static long calcularMesesComArredondamento(LocalDate inicio, LocalDate fim) {
+<b class="fc">&nbsp;        long meses = ChronoUnit.MONTHS.between(inicio, fim);</b>
+<b class="fc">&nbsp;        LocalDate base = inicio.plusMonths(meses);</b>
+<b class="fc">&nbsp;        return base.isBefore(fim) ? meses + 1 : meses;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private static boolean isFuncionario(String atribuicao) {
+<b class="pc">&nbsp;        if (atribuicao == null) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        String normalized = Normalizer.normalize(atribuicao, Normalizer.Form.NFD)</b>
+<b class="fc">&nbsp;            .replaceAll(&quot;\\p{M}&quot;, &quot;&quot;)</b>
+<b class="fc">&nbsp;            .trim()</b>
+<b class="fc">&nbsp;            .toLowerCase();</b>
+<b class="fc">&nbsp;        return &quot;funcionario&quot;.equals(normalized);</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-02 19:01</div>
+</div>
+</body>
+</html>
