@@ -1,0 +1,95 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProjetoRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.codegroup.project.projeto.repository</a>
+</div>
+
+<h1>Coverage Summary for Class: ProjetoRepository (com.codegroup.project.projeto.repository)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ProjetoRepository</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.codegroup.project.projeto.repository;
+&nbsp;
+&nbsp;import com.codegroup.project.projeto.entity.Projeto;
+&nbsp;import com.codegroup.project.projeto.entity.ProjetoStatus;
+&nbsp;import java.util.Collection;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;
+&nbsp;public interface ProjetoRepository extends JpaRepository&lt;Projeto, Long&gt;, JpaSpecificationExecutor&lt;Projeto&gt; {
+&nbsp;
+&nbsp;    @Query(&quot;&quot;&quot;
+&nbsp;        select count(p)
+&nbsp;        from Projeto p
+&nbsp;        join p.membros m
+&nbsp;        where m.id = :membroId
+&nbsp;          and p.id &lt;&gt; :projetoId
+&nbsp;          and p.status not in :statusFinais
+&nbsp;    &quot;&quot;&quot;)
+&nbsp;    long countProjetosAtivosDoMembroExcluindoProjeto(
+&nbsp;        @Param(&quot;membroId&quot;) Long membroId,
+&nbsp;        @Param(&quot;projetoId&quot;) Long projetoId,
+&nbsp;        @Param(&quot;statusFinais&quot;) Collection&lt;ProjetoStatus&gt; statusFinais
+&nbsp;    );
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-02 19:01</div>
+</div>
+</body>
+</html>

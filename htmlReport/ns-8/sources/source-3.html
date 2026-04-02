@@ -1,0 +1,304 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ProjetoService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.codegroup.project.projeto</a>
+</div>
+
+<h1>Coverage Summary for Class: ProjetoService (com.codegroup.project.projeto)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ProjetoService</td>
+<td class="coverageStat">
+  <span class="percent">
+    8,3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3,8%
+  </span>
+  <span class="absValue">
+    (3/79)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">ProjetoService$$SpringCGLIB$$0</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    8,3%
+  </span>
+  <span class="absValue">
+    (1/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    3,8%
+  </span>
+  <span class="absValue">
+    (3/79)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.codegroup.project.projeto;
+&nbsp;
+&nbsp;import com.codegroup.project.common.exception.NotFoundException;
+&nbsp;import com.codegroup.project.membro.MembroService;
+&nbsp;import com.codegroup.project.membro.entity.Membro;
+&nbsp;import com.codegroup.project.projeto.dto.ProjetoRequest;
+&nbsp;import com.codegroup.project.projeto.dto.ProjetoResponse;
+&nbsp;import com.codegroup.project.projeto.dto.RelatorioProjetosResponse;
+&nbsp;import com.codegroup.project.projeto.dto.StatusResumoResponse;
+&nbsp;import com.codegroup.project.projeto.entity.Projeto;
+&nbsp;import com.codegroup.project.projeto.entity.ProjetoStatus;
+&nbsp;import com.codegroup.project.projeto.entity.RiscoProjeto;
+&nbsp;import com.codegroup.project.projeto.repository.ProjetoRepository;
+&nbsp;import com.codegroup.project.projeto.repository.ProjetoSpecifications;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.EnumSet;
+&nbsp;import java.util.LinkedHashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.jpa.domain.Specification;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class ProjetoService {
+&nbsp;
+&nbsp;    private final ProjetoRepository projetoRepository;
+&nbsp;    private final MembroService membroService;
+&nbsp;
+<b class="fc">&nbsp;    public ProjetoService(ProjetoRepository projetoRepository, MembroService membroService) {</b>
+<b class="fc">&nbsp;        this.projetoRepository = projetoRepository;</b>
+<b class="fc">&nbsp;        this.membroService = membroService;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public ProjetoResponse criar(ProjetoRequest request) {
+<b class="nc">&nbsp;        Projeto projeto = new Projeto();</b>
+<b class="nc">&nbsp;        preencherCampos(projeto, request, null);</b>
+<b class="nc">&nbsp;        Projeto salvo = projetoRepository.save(projeto);</b>
+<b class="nc">&nbsp;        return toResponse(salvo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public ProjetoResponse buscarPorId(Long id) {
+<b class="nc">&nbsp;        return toResponse(obterProjeto(id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public Page&lt;ProjetoResponse&gt; listar(String nome, ProjetoStatus status, Long gerenteId, Pageable pageable) {
+<b class="nc">&nbsp;        Specification&lt;Projeto&gt; specs = Specification.where(ProjetoSpecifications.comNome(nome))</b>
+<b class="nc">&nbsp;            .and(ProjetoSpecifications.comStatus(status))</b>
+<b class="nc">&nbsp;            .and(ProjetoSpecifications.comGerenteId(gerenteId));</b>
+<b class="nc">&nbsp;        return projetoRepository.findAll(specs, pageable).map(this::toResponse);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public ProjetoResponse atualizar(Long id, ProjetoRequest request) {
+<b class="nc">&nbsp;        Projeto projeto = obterProjeto(id);</b>
+<b class="nc">&nbsp;        preencherCampos(projeto, request, projeto.getStatus());</b>
+<b class="nc">&nbsp;        Projeto salvo = projetoRepository.save(projeto);</b>
+<b class="nc">&nbsp;        return toResponse(salvo);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public void excluir(Long id) {
+<b class="nc">&nbsp;        Projeto projeto = obterProjeto(id);</b>
+<b class="nc">&nbsp;        ProjetoBusinessRules.validarExclusao(projeto.getStatus());</b>
+<b class="nc">&nbsp;        projetoRepository.delete(projeto);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    public ProjetoResponse associarMembros(Long projetoId, List&lt;Long&gt; membrosIds) {
+<b class="nc">&nbsp;        Projeto projeto = obterProjeto(projetoId);</b>
+<b class="nc">&nbsp;        List&lt;Membro&gt; membros = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (Long membroId : new LinkedHashSet&lt;&gt;(membrosIds)) {</b>
+<b class="nc">&nbsp;            membros.add(membroService.buscarEntidade(membroId));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        ProjetoBusinessRules.validarAlocacaoMembros(</b>
+&nbsp;            projeto,
+&nbsp;            membros,
+<b class="nc">&nbsp;            membroId -&gt; projetoRepository.countProjetosAtivosDoMembroExcluindoProjeto(</b>
+&nbsp;                membroId,
+<b class="nc">&nbsp;                projeto.getId(),</b>
+<b class="nc">&nbsp;                EnumSet.of(ProjetoStatus.ENCERRADO, ProjetoStatus.CANCELADO)</b>
+&nbsp;            )
+&nbsp;        );
+&nbsp;
+<b class="nc">&nbsp;        projeto.setMembros(new LinkedHashSet&lt;&gt;(membros));</b>
+<b class="nc">&nbsp;        return toResponse(projetoRepository.save(projeto));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(readOnly = true)
+&nbsp;    public RelatorioProjetosResponse relatorio() {
+<b class="nc">&nbsp;        List&lt;Projeto&gt; projetos = projetoRepository.findAll();</b>
+<b class="nc">&nbsp;        List&lt;StatusResumoResponse&gt; resumo = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (ProjetoStatus status : ProjetoStatus.values()) {</b>
+<b class="nc">&nbsp;            long quantidade = projetos.stream().filter(p -&gt; p.getStatus() == status).count();</b>
+<b class="nc">&nbsp;            BigDecimal totalOrcado = projetos.stream()</b>
+<b class="nc">&nbsp;                .filter(p -&gt; p.getStatus() == status)</b>
+<b class="nc">&nbsp;                .map(Projeto::getOrcamentoTotal)</b>
+<b class="nc">&nbsp;                .reduce(BigDecimal.ZERO, BigDecimal::add);</b>
+<b class="nc">&nbsp;            resumo.add(new StatusResumoResponse(status, quantidade, totalOrcado));</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        List&lt;Long&gt; duracoes = projetos.stream()</b>
+<b class="nc">&nbsp;            .filter(p -&gt; p.getStatus() == ProjetoStatus.ENCERRADO)</b>
+<b class="nc">&nbsp;            .filter(p -&gt; p.getDataRealTermino() != null)</b>
+<b class="nc">&nbsp;            .map(p -&gt; ProjetoBusinessRules.calcularDuracaoDias(p.getDataInicio(), p.getDataRealTermino()))</b>
+<b class="nc">&nbsp;            .toList();</b>
+&nbsp;
+<b class="nc">&nbsp;        BigDecimal mediaDuracao = duracoes.isEmpty()</b>
+<b class="nc">&nbsp;            ? BigDecimal.ZERO</b>
+<b class="nc">&nbsp;            : BigDecimal.valueOf(duracoes.stream().mapToLong(Long::longValue).average().orElse(0));</b>
+&nbsp;
+<b class="nc">&nbsp;        long membrosUnicos = projetos.stream()</b>
+<b class="nc">&nbsp;            .flatMap(p -&gt; p.getMembros().stream())</b>
+<b class="nc">&nbsp;            .map(Membro::getId)</b>
+<b class="nc">&nbsp;            .distinct()</b>
+<b class="nc">&nbsp;            .count();</b>
+&nbsp;
+<b class="nc">&nbsp;        return new RelatorioProjetosResponse(resumo, mediaDuracao, membrosUnicos);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Projeto obterProjeto(Long id) {
+<b class="nc">&nbsp;        return projetoRepository.findById(id)</b>
+<b class="nc">&nbsp;            .orElseThrow(() -&gt; new NotFoundException(&quot;Projeto nao encontrado: &quot; + id));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void preencherCampos(Projeto projeto, ProjetoRequest request, ProjetoStatus statusAtual) {
+<b class="nc">&nbsp;        ProjetoBusinessRules.validarDatas(request.dataInicio(), request.previsaoTermino());</b>
+<b class="nc">&nbsp;        ProjetoBusinessRules.validarTransicaoStatus(statusAtual, request.status());</b>
+&nbsp;
+<b class="nc">&nbsp;        projeto.setNome(request.nome());</b>
+<b class="nc">&nbsp;        projeto.setDataInicio(request.dataInicio());</b>
+<b class="nc">&nbsp;        projeto.setPrevisaoTermino(request.previsaoTermino());</b>
+<b class="nc">&nbsp;        projeto.setDataRealTermino(request.dataRealTermino());</b>
+<b class="nc">&nbsp;        projeto.setOrcamentoTotal(request.orcamentoTotal());</b>
+<b class="nc">&nbsp;        projeto.setDescricao(request.descricao());</b>
+<b class="nc">&nbsp;        projeto.setStatus(request.status());</b>
+<b class="nc">&nbsp;        projeto.setGerente(membroService.buscarEntidade(request.gerenteId()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private ProjetoResponse toResponse(Projeto projeto) {
+<b class="nc">&nbsp;        Set&lt;Long&gt; membrosIds = projeto.getMembros().stream().map(Membro::getId).collect(java.util.stream.Collectors.toSet());</b>
+<b class="nc">&nbsp;        RiscoProjeto risco = ProjetoBusinessRules.classificarRisco(</b>
+<b class="nc">&nbsp;            projeto.getOrcamentoTotal(),</b>
+<b class="nc">&nbsp;            projeto.getDataInicio(),</b>
+<b class="nc">&nbsp;            projeto.getPrevisaoTermino()</b>
+&nbsp;        );
+<b class="nc">&nbsp;        return new ProjetoResponse(</b>
+<b class="nc">&nbsp;            projeto.getId(),</b>
+<b class="nc">&nbsp;            projeto.getNome(),</b>
+<b class="nc">&nbsp;            projeto.getDataInicio(),</b>
+<b class="nc">&nbsp;            projeto.getPrevisaoTermino(),</b>
+<b class="nc">&nbsp;            projeto.getDataRealTermino(),</b>
+<b class="nc">&nbsp;            projeto.getOrcamentoTotal(),</b>
+<b class="nc">&nbsp;            projeto.getDescricao(),</b>
+<b class="nc">&nbsp;            projeto.getStatus(),</b>
+&nbsp;            risco,
+<b class="nc">&nbsp;            projeto.getGerente().getId(),</b>
+&nbsp;            membrosIds
+&nbsp;        );
+&nbsp;    }
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-04-02 19:01</div>
+</div>
+</body>
+</html>

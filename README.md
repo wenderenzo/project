@@ -32,6 +32,33 @@ Use o Maven Wrapper na raiz:
 ./mvnw.cmd spring-boot:run
 ```
 
+## Cobertura de testes (foco em regras de negocio)
+Este repositorio ja possui relatorio HTML de cobertura dentro do proprio projeto, em `htmlReport/index.html`.
+
+Como usar no dia a dia:
+1. Execute os testes para validar o estado atual:
+
+```powershell
+./mvnw.cmd test
+```
+
+2. Abra no navegador o arquivo do repositorio `htmlReport/index.html`.
+3. Ordene por `Class` ou `Line` e confira primeiro:
+   - `com.codegroup.project.projeto.ProjetoBusinessRules`
+   - `com.codegroup.project.projeto.ProjetoService`
+   - `com.codegroup.project.membro.MembroService`
+
+Endereco dos resultados no repositorio:
+- Cobertura das regras de negocio (visual): `htmlReport/index.html`
+- Resultado da execucao dos testes (JUnit/Surefire): `target/surefire-reports/`
+- Arquivos mais diretos das regras de negocio: `target/surefire-reports/TEST-com.codegroup.project.projeto.ProjetoBusinessRulesTest.xml` e `target/surefire-reports/TEST-com.codegroup.project.projeto.ProjetoServiceTest.xml`
+
+Como interpretar resultado satisfatorio para as rules:
+- Meta tecnica do desafio: pelo menos `70%` de cobertura nas regras de negocio.
+- Priorize o percentual das classes de regra (nao apenas o total global do projeto).
+
+Sugestao rapida: sempre que adicionar/alterar regra em service/business rules, atualize o teste correspondente e reabra `htmlReport/index.html` para confirmar impacto.
+
 Swagger/OpenAPI:
 - `http://localhost:8080/swagger-ui/index.html`
 
